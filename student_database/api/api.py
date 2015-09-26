@@ -58,7 +58,7 @@ class MarksPerStudentApi(object):
 class studentApi(object):
 
     @classmethod
-    def get_list(cls, order_by=['registration_no'],page='1',items_per_page=10):
+    def get_list(cls, order_by=['name'],page='1',items_per_page=10):
 
         student_list=student.objects.order_by(*order_by)
         if page == -1:
@@ -69,12 +69,12 @@ class studentApi(object):
         return students, paginator
 
     @classmethod
-    def get(cls,branch=None):
+    def get(cls,name=None):
         try:
-            student_list=student.objects.get(branch=branch)
+            student_list=student.objects.get(name=name)
             return student_list
         except student.DoesNotExist:
-            print 'branch does not exist'
+            print 'student does not exist'
 
 
 
@@ -97,78 +97,33 @@ class studentApi(object):
             print 'student not found '
 
     @classmethod
-    def update(cls, registration_no,data,**kwargs):
-
-
-
-    @classmethod
-    def update(cls, field, data, **kwargs):
-
+    def update(cls, branch,data,**kwargs):
         try:
-            field_list = FieldList.objects.get(field=field)
-
-            field_list.load_from_dict(data)
-            field_list.save()
-            return field_list
-
-        except FieldList.DoesNotExist:
-            print 'Field not found'
+            student_data = student.objects.get(branch=branch)
+            student_data.load_from_dict(data)
+            student_data.save()
+            return student_data
+        except student.DoesNotExist:
+            print 'somthings fishy'
 
 
-class BooksListApi(object):
+
+
+class StudentContactDetailsApi(object):
 
     @classmethod
-    def get_list(cls, order_by=['title'], page='1', items_per_page=10):
-
-        books_list = BookList.objects.order_by(*order_by)
+    def get_list(cls, order_by=['mobile_no'],page='1',items_per_page=10):
+        student_data = StudentContactDetails.objects.order_by(*order_by)
         if page == -1:
-            return books_list, None
-
-        paginator = Paginator(books_list, items_per_page)
-        books = paginator.page(page)
-        return books, paginator
+            return student_data, None
+        paginator = Paginator(student_data,items_per_page)
+        student_contacts=paginator.page(page)
+        return student_contacts, paginator
 
     @classmethod
-    def get(cls, title=None):
+    def get(cls,title=None):
         try:
-            books_list = BookList.objects.filter(title__contains=title)
-            return books_list
-        except BookList.DoesNotExist:
-            print 'books not found'
-
-    @classmethod
-    def create(cls, data):
-
-        # check if title is present:
-        if 'title' not in data or data['title'] is None:
-            print 'Invalid Name'
-
-        books_list = BookList(**data)
-        books_list.save()
-        return books_list
-
-    @classmethod
-    def delete(cls, title=None):
-        try:
-            book = BookList.objects.get(title=title)
-            book.delete()
-            return book
-        except BookList.DoesNotExist:
-            print 'Book not found'
-
-    @classmethod
-    def update(cls, title, data, **kwargs):
-
-        try:
-            _list = BookList.objects.get(title=title)
-
-            _list.load_from_dict(data)
-            _list.save()
-            return _list
-
-        except BookList.DoesNotExist:
-            print 'Book not found'
 
 
 
-
+    
