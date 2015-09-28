@@ -1,8 +1,8 @@
 from django.core.paginator import Paginator
-from ..models import marks,student,StudentContactDetails
+from ..models.models import marks,student,StudentContactDetails
 
 
-class MarksPerStudentApi(object):
+class MarksApi(object):
     @classmethod
     def get_list(cls, order_by=['registration_no'],page='1',items_per_page=10):
 
@@ -121,9 +121,42 @@ class StudentContactDetailsApi(object):
         return student_contacts, paginator
 
     @classmethod
-    def get(cls,title=None):
+    def get(cls,email=None):
         try:
+            email_id= StudentContactDetails.objects.filter(email__contains=email)
+            return email_id
+        except StudentContactDetails.DoesNotExist:
+            print 'no student with such email id '
+
+    @classmethod
+    def create(cls, data):
+        if 'address' not in data or data['address'] is None:
+            print 'invalid student details'
+
+        student_contact_details=StudentContactDetails(**data)
+        student_contact_details.save()
+        return student_contact_details
+
+
+    @classmethod
+    def delete(cls, mobile_no=None):
+        try:
+            student_data= StudentContactDetails.objects.get(mobile_no=mobile_no)
+            student_data.delete()
+            return student_data
+        except StudentContactDetails.DoesNotExist:
+            print 'not found'
+
+    @classmethod
+    def update(cls,mobile_no,data,**kwargs):
+        try:
+            student_data=StudentContactDetails.objects.get(mobile_no=mobile_no)
+            student_data.load_from_dict(data)
+            student_data.save()
+            return student_data
+        except StudentContactDetails.DoesNotExist:
+            print 'not found'
 
 
 
-    
+

@@ -4,6 +4,7 @@ from django.db import models
 from django.utils.translation import pgettext_lazy
 
 
+
 class marks(models.Model):
     registration_no=models.IntegerField(
         verbose_name=pgettext_lazy('Registration Number','Registration No'),
@@ -58,7 +59,7 @@ class student(models.Model):
     registration_no=models.ForeignKey(
         marks,
         verbose_name=pgettext_lazy('Registration Number','Registration No'),
-        related_name='registration_no'
+        related_name='registartion_num_student'
     )
 
     branch=models.CharField(
@@ -93,46 +94,6 @@ class student(models.Model):
         app_label='student_database'
 
 
-
-
-class StudentContactDetails(models.Model):
-    email_id=models.CharField(
-        verbose_name=pgettext_lazy('Email Id','Email Id'),
-        max_length=256,
-    )
-
-    mobile_no=models.ForeignKey(
-        student,
-        verbose_name=pgettext_lazy('mobile number of student','Mobile No'),
-        related_name='mobile_no',
-    )
-
-    address=models.CharField(
-        verbose_name=pgettext_lazy('Address of Student','Student Address'),
-        max_length=200,
-    )
-
-    objects=StudentManager()
-
-
-    def to_dict(self):
-        dictionary={
-            'email':self.email_id,
-            'mobile_no':self.mobile_no.to_dict()
-        }
-
-        return dictionary
-
-    def load_from_dict(self, updates):
-        for field, value in updates.iteritems():
-            if hasattr(self, field):
-                self.__setattr__(field, value)
-
-    class Meta:
-        app_label='student_database'
-
-
-
 class StudentManager(models.Manager):
     def get_list(self, title):
         results=self.filter(title_contains=title)
@@ -150,4 +111,41 @@ class StudentManager(models.Manager):
     class Meta:
         app_label='student_database'
 
+
+class StudentContactDetails(models.Model):
+    email_id=models.CharField(
+        verbose_name=pgettext_lazy('Email Id','Email Id'),
+        max_length=256,
+    )
+
+    mobile_no=models.ForeignKey(
+        student,
+        verbose_name=pgettext_lazy('mobile number of student','Mobile No'),
+        related_name='mobile_number',
+    )
+
+    address=models.CharField(
+        verbose_name=pgettext_lazy('Address of Student','Student Address'),
+        max_length=200,
+    )
+
+    objects=StudentManager
+
+
+    def to_dict(self):
+        dictionary={
+            'email':self.email_id,
+            'mobile_no':self.mobile_no.to_dict(),
+            'address':self.address,
+        }
+
+        return dictionary
+
+    def load_from_dict(self, updates):
+        for field, value in updates.iteritems():
+            if hasattr(self, field):
+                self.__setattr__(field, value)
+
+    class Meta:
+        app_label='student_database'
 
