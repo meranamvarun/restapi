@@ -10,7 +10,7 @@ class MarksView(View):
     http_method_names = ['get', 'put', 'post', 'delete']
     def get(self,request,**kwargs):
         if kwargs.get('registration_no',None) is not None:
-            registration_no=kwargs.get(registration_no)
+            registration_no=kwargs.get('registration_no')
             try:
                 student_data=MarksApi.get(registration_no)
                 response=student_data.to_dict()
